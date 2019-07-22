@@ -2,6 +2,10 @@
 
 require 'bundler/setup'
 require 'hibp'
+require 'webmock/rspec'
+
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+$LOAD_PATH.unshift(File.dirname(__FILE__))
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
