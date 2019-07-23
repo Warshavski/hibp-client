@@ -58,4 +58,9 @@ build-iPhoneSimulator/
 # rspec failure tracking
 .rspec_status
 
+# For those using rbenv
 .ruby-version
+
+# Don't checkin Gemfile.lock
+# See: http://yehudakatz.com/2010/12/16/clarifying-the-roles-of-the-gemspec-and-gemfile/
+Gemfile.lock

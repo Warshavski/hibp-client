@@ -12,7 +12,7 @@ module Hibp
 
     attr_reader :headers
 
-    # @param api_key [String] -
+    # @param api_key [String] - (optional, default: '')
     #   An HIBP subscription key is required to make an authorised call
     #
     # @param parser [Hibp::Parser]
@@ -20,7 +20,7 @@ module Hibp
     # @param endpoint [String] -
     #   A specific API endpoint to call appropriate method
     #
-    def initialize(api_key: nil, parser: Parser.new, endpoint:)
+    def initialize(api_key: '', parser: Parser.new, endpoint:)
       @endpoint = endpoint
       @parser = parser
 
