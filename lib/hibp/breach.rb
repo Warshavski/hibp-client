@@ -10,7 +10,14 @@ module Hibp
   #
   #   For example, Adobe was a breach, Gawker was a breach etc.
   #
+  #   A "breach" is an incident where data is inadvertently exposed in a vulnerable system,
+  #   usually due to insufficient access controls or security weaknesses in the software.
+  #
+  #   @see https://haveibeenpwned.com/FAQs
+  #
   class Breach
+    include Hibp::AttributeAssignment
+
     attr_accessor :name, :title, :domain, :description, :logo_path,
                   :data_classes, :pwn_count,
                   :breach_date, :added_date, :modified_date,
@@ -101,35 +108,6 @@ module Hibp
 
     %i[verified fabricated sensitive retired spam_list].each do |method|
       define_method("#{method}?") { public_send("is_#{method}") }
-    end
-
-    private
-
-    def assign_attributes(new_attributes)
-      unless new_attributes.is_a?(Hash)
-        raise ArgumentError, 'Attributes must be a Hash'
-      end
-
-      return if new_attributes.nil? || new_attributes.empty?
-
-      attributes = stringify_keys(new_attributes)
-      attributes.each { |k, v| _assign_attribute(k, v) }
-    end
-
-    def stringify_keys(hash)
-      transform_keys(hash, &:to_s)
-    end
-
-    def transform_keys(hash)
-      hash.each_with_object({}) do |(key, value), result|
-        result[yield(key)] = value
-      end
-    end
-
-    def _assign_attribute(attr_name, attr_value)
-      return unless respond_to?("#{attr_name}=")
-
-      public_send("#{attr_name}=", attr_value)
     end
   end
 end
