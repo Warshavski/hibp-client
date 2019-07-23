@@ -3,13 +3,11 @@
 require 'spec_helper'
 
 RSpec.describe Hibp::Request do
-  let(:endpoint) { 'test' }
-
-  let(:api_key)   { 'wat-key' }
-  let(:api_host)  { 'https://haveibeenpwned.com/api/v3' }
+  let!(:endpoint)   { 'test' }
+  let!(:api_host)   { 'https://haveibeenpwned.com/api/v3' }
 
   describe '#get' do
-    subject { described_class.new(api_key: api_host, endpoint: endpoint).get }
+    subject { described_class.new(endpoint: endpoint).get }
 
     it 'surfaces client request exceptions as a Hibp::ServiceError' do
       exception = Faraday::Error::ClientError.new('the server responded with status 500')
@@ -37,7 +35,7 @@ RSpec.describe Hibp::Request do
       exception = Faraday::Error::ClientError.new('the server responded with status 503', response_values)
 
       begin
-        described_class.new(api_key: api_key, endpoint: endpoint).send(:handle_error, exception)
+        described_class.new(endpoint: endpoint).send(:handle_error, exception)
       rescue StandardError => boom
         expect(boom.status_code).to eq 503
         expect(boom.raw_body).to eq 'A non JSON response'
