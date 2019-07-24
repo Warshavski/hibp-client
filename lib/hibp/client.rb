@@ -5,11 +5,28 @@ module Hibp
   #
   #   Used to fetch data from haveibeenpwned API
   #
+  #   Public methods return `Hibp::Query` instance,
+  #     which can be configured by applying filters
+  #
+  #   Data will only be returned if the `#fetch` method is called on the `Hibp::Query` instance.
+  #
   #   @see https://haveibeenpwned.com/API/v3
   #
   class Client
+    CORE_API_HOST = 'https://haveibeenpwned.com/api/v3'
+    PASSWORD_API_HOST = 'https://api.pwnedpasswords.com'
 
-    # @param api_key [String] - (optional, default: nil)
+    CORE_API_SERVICES = {
+      breach: 'breach',
+      breaches: 'breaches',
+      account_breaches: 'breachedaccount',
+      data_classes: 'dataclasses',
+      pastes: 'pasteaccount'
+    }.freeze
+
+    attr_reader :authorization_header
+
+    # @param api_key [String] - (optional, default: '')
     #   Authorisation is required for all APIs that enable searching HIBP by email address,
     #   namely retrieving all breaches for an account and retrieving all pastes for an account.
     #   An HIBP subscription key is required to make an authorised call and can be obtained on the API key page.
@@ -27,30 +44,36 @@ module Hibp
     #
     # @note This is the stable value which may or may not be the same as the breach "title" (which can change).
     #
-    # @raise [Hibp::ServiceError]
-    # @return [Hibp::Breach]
+    # @return [Hibp::Query]
     #
-    def find_breach(name)
-      breach_request("breach/#{name}").get
+    def breach(name)
+      configure_core_query(:breach, name)
     end
 
     # Fetch all breached sites in the system
-    #
-    # @param filters [Hash] - (optional, default: {})
-    #   Additional filtration params
-    #
-    # @option filters [String] :domain -
-    #   Filters the result set to only breaches against the domain specified.
-    #   It is possible that one site (and consequently domain), is compromised on multiple occasions.
+    # Available filters(domain)
     #
     # @note Collection is sorted alphabetically by the title of the breach.
     #
-    # @raise [Hibp::ServiceError]
-    # @return [Array<Hibp::Breach>]
+    # @return [Hibp::Query]
     #
-    def fetch_breaches(filters = {})
-      breach_request('breaches')
-        .get(params: convert_params(filters))
+    def breaches
+      configure_core_query(:breaches)
+    end
+
+    # Fetch a list of all breaches a particular account has been involved in.
+    # Available filters(truncate, unverified, domain)
+    #
+    # @param account [String] - The email address to be searched for.
+    #
+    # @note This method requires authorization. HIBP API key must be used.
+    # @note By default, only the name of the breach is returned rather than the complete breach data.
+    # @note By default, both verified and unverified breaches are returned when performing a search.
+    #
+    # @return [Hibp::Query]
+    #
+    def account_breaches(account)
+      configure_core_query(:account_breaches, CGI.escape(account))
     end
 
     # Fetch all data classes in the system
@@ -60,11 +83,10 @@ module Hibp
     # The values returned by this service are ordered alphabetically in
     # a string array and will expand over time as new breaches expose previously unseen classes of data.
     #
-    # @raise [Hibp::ServiceError]
-    # @return [Array<String>]
+    # @return [Hibp::Query]
     #
-    def fetch_data_classes
-      simple_request('dataclasses').get
+    def data_classes
+      configure_core_query(:data_classes)
     end
 
     # Search an account for pastes.
@@ -76,81 +98,42 @@ module Hibp
     # disclosed as the result of a breach. Review the paste and determine if your
     # account has been compromised then take appropriate action such as changing passwords.
     #
-    # @param account [String] -
-    #   The URL encoded email address to be searched for.
+    # @param account [String] - The email address to be searched for.
     #
     # @note This is an authenticated API and an HIBP API key must be passed with the request.
     # @note The collection is sorted chronologically with the newest paste first.
     #
-    # @raise [Hibp::ServiceError]
-    # @return [Array<Hibp::Paste>]
+    # @return [Hibp::Query]
     #
-    def fetch_account_pastes(account)
-      paste_request("pasteaccount/#{account}")
-        .get(headers: @authorization_header)
-    end
-
-    # Fetch a list of all breaches a particular account has been involved in.
-    #
-    # @param account [String]  -
-    #   The URL encoded email address to be searched for.
-    #
-    # @param params [Hash] - (optional, default: {})
-    #   Additional filtration and data customization params
-    #
-    # @option params [Boolean] :truncate - (default: true)
-    #   Full/Short data switcher(only name or full breach data)
-    #
-    # @option params [Boolean] :unverified -
-    #   Returns breaches that have been flagged as "unverified".
-    #
-    # @option params [String] :domain -
-    #   Filters the result set to only breaches against the domain specified.
-    #   It is possible that one site (and consequently domain), is compromised on multiple occasions.
-    #
-    # @note This method requires authorization. HIBP API key must be used.
-    # @note By default, only the name of the breach is returned rather than the complete breach data.
-    # @note By default, both verified and unverified breaches are returned when performing a search.
-    #
-    # @raise [Hibp::ServiceError]
-    # @return [Array<Hibp::Breach>]
-    #
-    def fetch_account_breaches(account, params = {})
-      breach_request("breachedaccount/#{account}")
-        .get(params: convert_params(params), headers: @authorization_header)
+    def pastes(account)
+      configure_core_query(:pastes, CGI.escape(account))
     end
 
     private
 
-    def simple_request(endpoint)
-      confugure_request { { endpoint: endpoint } }
+    def configure_core_query(service, parameter = nil)
+      endpoint = resolve_endpoint(service, parameter)
+      parser = resolve_parser(service)
+
+      Query.new(endpoint: endpoint, parser: parser, headers: @authorization_header)
     end
 
-    def breach_request(endpoint)
-      confugure_request do
-        { endpoint: endpoint, parser: Parser.new(Breaches::Converter.new) }
-      end
+    def resolve_endpoint(service, parameter)
+      endpoint = "#{CORE_API_HOST}/#{CORE_API_SERVICES[service]}"
+
+      parameter ? "#{endpoint}/#{parameter}" : endpoint
     end
 
-    def paste_request(endpoint)
-      confugure_request do
-        { endpoint: endpoint, parser: Parser.new(Pastes::Converter.new) }
-      end
-    end
+    def resolve_parser(service)
+      breach_services = %i[breach breaches account_bereaches]
 
-    def confugure_request
-      Request.new(yield)
-    end
-
-    def convert_params(params)
-      mappings = {
-        truncate: 'truncateResponse',
-        domain: 'domain',
-        unverified: 'includeUnverified'
-      }
-
-      params.each_with_object({}) do |(origin_key, value), acc|
-        acc[mappings.fetch(origin_key)] = value
+      case service
+      when ->(n) { breach_services.include?(n) }
+        Parser.new(Converters::Breach.new)
+      when :pastes
+        Parser.new(Converters::Paste)
+      when :data_classes
+        Parser.new
       end
     end
   end

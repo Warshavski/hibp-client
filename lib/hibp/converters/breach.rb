@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 module Hibp
-  module Breaches
-    # Hibp::Breaches::Converter
+  module Converters
+    # Hibp::Converter::Breach
     #
     #   Used to convert raw API response data to the breach entity or
     #     array of the entities in case if response data contains multiple breaches
     #
-    class Converter
-      include ::Hibp::DataConversion
+    class Breach
+      include Helpers::JsonConversion
 
       # Convert raw data to the breach entity
       #
@@ -20,7 +20,7 @@ module Hibp
       # @return [Array<Hibp::Breach>, Hibp::Breach]
       #
       def convert(data)
-        super { |attributes| ::Hibp::Breach.new(attributes) }
+        super { |attributes| Models::Breach.new(attributes) }
       end
     end
   end
