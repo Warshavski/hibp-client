@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Hibp::Breach do
+RSpec.describe Hibp::Models::Breach do
   describe '.new' do
     subject { described_class.new(attributes) }
 

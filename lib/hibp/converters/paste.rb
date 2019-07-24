@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 module Hibp
-  module Pastes
-    # Hibp::Pastes::Converter
+  module Converters
+    # Hibp::Converters::Paste
     #
     #   Used to convert raw API response data to the array of the paste entities
     #
-    class Converter
-      include ::Hibp::DataConversion
+    class Paste
+      include Helpers::JsonConversion
 
       # Convert raw data to the pastes entities
       #
@@ -19,7 +19,7 @@ module Hibp
       # @return [Array<Hibp::Paste>]
       #
       def convert(data)
-        super { |attributes| ::Hibp::Paste.new(attributes) }
+        super { |attributes| Models::Paste.new(attributes) }
       end
     end
   end

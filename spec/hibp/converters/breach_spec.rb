@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Hibp::Breaches::Converter do
+RSpec.describe Hibp::Converters::Breach do
   describe '#convert' do
     subject { described_class.new.convert(data) }
 
@@ -22,7 +22,7 @@ RSpec.describe Hibp::Breaches::Converter do
         }
       end
 
-      it { is_expected.to be_an(Hibp::Breach) }
+      it { is_expected.to be_an(Hibp::Models::Breach) }
 
       it { expect(subject.name).to eq('name') }
 
@@ -65,7 +65,7 @@ RSpec.describe Hibp::Breaches::Converter do
 
       it { expect(subject.size).to be(2) }
 
-      it { expect(subject.all? { |e| e.is_a?(Hibp::Breach) }).to be(true) }
+      it { expect(subject.all? { |e| e.is_a?(Hibp::Models::Breach) }).to be(true) }
     end
   end
 end

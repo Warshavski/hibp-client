@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Hibp::Paste do
+RSpec.describe Hibp::Models::Paste do
   describe '.new' do
     subject { described_class.new(attributes) }
 

@@ -3,16 +3,18 @@
 require 'faraday'
 require 'oj'
 
-require 'hibp/attribute_assignment'
-require 'hibp/data_conversion'
+require 'hibp/helpers/attribute_assignment'
+require 'hibp/helpers/json_conversion'
 
-require 'hibp/breach'
-require 'hibp/breaches/converter'
+require 'hibp/models/breach'
+require 'hibp/models/paste'
+
+require 'hibp/converters/breach'
+require 'hibp/converters/paste'
+
+require 'hibp/query'
 
 require 'hibp/client'
-
-require 'hibp/paste'
-require 'hibp/pastes/converter'
 
 require 'hibp/parser'
 require 'hibp/request'

@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Hibp::Pastes::Converter do
+RSpec.describe Hibp::Converters::Paste do
   describe '#convert' do
     subject { described_class.new.convert(data) }
 
@@ -18,7 +18,7 @@ RSpec.describe Hibp::Pastes::Converter do
 
     it { is_expected.to be_an(Array) }
 
-    it { expect(subject.all? { |e| e.is_a?(Hibp::Paste) }).to be(true) }
+    it { expect(subject.all? { |e| e.is_a?(Hibp::Models::Paste) }).to be(true) }
 
     it { expect(subject.first.source).to eq('Pastebin') }
 

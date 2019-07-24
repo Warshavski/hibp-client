@@ -8,22 +8,21 @@ module Hibp
   #   @see https://haveibeenpwned.com/API/v3
   #
   class Request
-    API_HOST = 'https://haveibeenpwned.com/api/v3'
-
     attr_reader :headers
 
-    # @param parser [Hibp::Parser]
+    # @param parser [Hibp::Parser] -
+    #   A tool to parse and convert data into appropriate models
     #
     # @param endpoint [String] -
     #   A specific API endpoint to call appropriate method
     #
-    def initialize(parser: Parser.new, endpoint:)
+    def initialize(endpoint:, parser: Parser.new)
       @endpoint = endpoint
       @parser = parser
 
       @headers = {
         'Content-Type' => 'application/json',
-        'User-Agent' => "Breach-Monitor-Client #{Hibp::VERSION}"
+        'User-Agent' => "Ruby HIBP-Client #{Hibp::VERSION}"
       }
     end
 
@@ -42,7 +41,9 @@ module Hibp
         configure_request(request: request, params: params, headers: headers)
       end
 
-      @parser.parse_response(response)
+      @parser ? @parser.parse_response(response) : response
+    rescue Faraday::ClientError::ResourceNotFound
+      nil
     rescue StandardError => e
       handle_error(e)
     end
@@ -50,7 +51,7 @@ module Hibp
     private
 
     def rest_client
-      Faraday.new(API_HOST) do |faraday|
+      Faraday.new do |faraday|
         faraday.headers = @headers
 
         faraday.response(:raise_error)
