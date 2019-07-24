@@ -56,4 +56,14 @@ RSpec.describe Hibp::Client do
 
     it { expect(subject.headers).to eq('hibp-api-key' => '') }
   end
+
+  describe '#passwords' do
+    subject { described_class.new.passwords('test') }
+
+    it { is_expected.to be_an(Hibp::Query) }
+
+    it { expect(subject.endpoint).to eq('https://api.pwnedpasswords.com/range/A94A8') }
+
+    it { expect(subject.headers).to eq({}) }
+  end
 end

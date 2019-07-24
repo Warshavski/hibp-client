@@ -14,7 +14,7 @@ module Hibp
   #
   class Client
     CORE_API_HOST = 'https://haveibeenpwned.com/api/v3'
-    PASSWORD_API_HOST = 'https://api.pwnedpasswords.com'
+    PASSWORD_API_HOST = 'https://api.pwnedpasswords.com/range'
 
     CORE_API_SERVICES = {
       breach: 'breach',
@@ -109,7 +109,29 @@ module Hibp
       configure_core_query(:pastes, CGI.escape(account))
     end
 
+    # Search pwned passwords
+    #
+    # @param password [String] -
+    #   The value of the source password being searched for
+    #
+    # @note The API will respond with include the suffix of every hash beginning
+    #       with the specified password prefix(five first chars of the password hash),
+    #       and with a count of how many times it appears in the data set.
+    #
+    # @return [Hibp::Query]
+    #
+    def passwords(password)
+      configure_password_query(password)
+    end
+
     private
+
+    def configure_password_query(password)
+      pwd_hash = ::Digest::SHA1.hexdigest(password).upcase
+      endpoint = "#{PASSWORD_API_HOST}/#{pwd_hash[0..4]}"
+
+      Query.new(endpoint: endpoint, parser: Parsers::Password.new)
+    end
 
     def configure_core_query(service, parameter = nil)
       endpoint = resolve_endpoint(service, parameter)
@@ -129,11 +151,11 @@ module Hibp
 
       case service
       when ->(n) { breach_services.include?(n) }
-        Parser.new(Converters::Breach.new)
+        Parsers::Json.new(Converters::Breach.new)
       when :pastes
-        Parser.new(Converters::Paste)
+        Parsers::Json.new(Converters::Paste)
       when :data_classes
-        Parser.new
+        Parsers::Json.new
       end
     end
   end
