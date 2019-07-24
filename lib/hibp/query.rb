@@ -17,7 +17,7 @@ module Hibp
     # @param parser [Hibp::Parser] -
     #   A tool to parse and convert data into appropriate models
     #
-    def initialize(endpoint:, headers: {}, parser: Parser.new)
+    def initialize(endpoint:, headers: {}, parser: Parsers::Json.new)
       @endpoint = endpoint
       @headers = headers
 

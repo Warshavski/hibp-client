@@ -7,9 +7,7 @@ RSpec.describe Hibp::ServiceError do
     context 'empty params' do
       subject { described_class.new }
 
-      it { expect(subject.message).to eq(' @correlation_id=nil, @data=nil, @raw_body=nil, @status_code=nil') }
-
-      it { expect(subject.correlation_id).to be_nil }
+      it { expect(subject.message).to eq(' @data=nil, @raw_body=nil, @status_code=nil') }
 
       it { expect(subject.data).to be_nil }
 
@@ -21,9 +19,7 @@ RSpec.describe Hibp::ServiceError do
     context 'only message' do
       subject { described_class.new('test message') }
 
-      it { expect(subject.message).to eq('test message @correlation_id=nil, @data=nil, @raw_body=nil, @status_code=nil') }
-
-      it { expect(subject.correlation_id).to be_nil }
+      it { expect(subject.message).to eq('test message @data=nil, @raw_body=nil, @status_code=nil') }
 
       it { expect(subject.data).to be_nil }
 
@@ -37,16 +33,13 @@ RSpec.describe Hibp::ServiceError do
 
       let(:params) do
         {
-          correlation_id: 'correlation_id',
           data: 'data',
           raw_body: 'raw_body',
           status_code: 'status_code'
         }
       end
 
-      it { expect(subject.message).to eq('test message @correlation_id="correlation_id", @data="data", @raw_body="raw_body", @status_code="status_code"') }
-
-      it { expect(subject.correlation_id).to eq('correlation_id') }
+      it { expect(subject.message).to eq('test message @data="data", @raw_body="raw_body", @status_code="status_code"') }
 
       it { expect(subject.data).to eq('data') }
 
@@ -63,13 +56,12 @@ RSpec.describe Hibp::ServiceError do
 
     let(:params) do
       {
-        correlation_id: 'correlation_id',
         data: 'data',
         raw_body: 'raw_body',
         status_code: 'status_code'
       }
     end
 
-    it { expect(subject).to eq('test message @correlation_id="correlation_id", @data="data", @raw_body="raw_body", @status_code="status_code"') }
+    it { expect(subject).to eq('test message @data="data", @raw_body="raw_body", @status_code="status_code"') }
   end
 end

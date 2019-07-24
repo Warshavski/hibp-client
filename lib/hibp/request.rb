@@ -16,7 +16,7 @@ module Hibp
     # @param endpoint [String] -
     #   A specific API endpoint to call appropriate method
     #
-    def initialize(endpoint:, parser: Parser.new)
+    def initialize(endpoint:, parser: Parsers::Json.new)
       @endpoint = endpoint
       @parser = parser
 
@@ -41,7 +41,7 @@ module Hibp
         configure_request(request: request, params: params, headers: headers)
       end
 
-      @parser ? @parser.parse_response(response) : response
+      @parser ? @parser.parse_response(response) : response.body
     rescue Faraday::ClientError::ResourceNotFound
       nil
     rescue StandardError => e

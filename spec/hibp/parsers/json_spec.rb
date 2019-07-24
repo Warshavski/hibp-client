@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Hibp::Parser do
+RSpec.describe Hibp::Parsers::Json do
   describe '#parse_response' do
     subject { described_class.new(converter).parse_response(response) }
 
