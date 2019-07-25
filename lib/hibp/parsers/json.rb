@@ -8,30 +8,29 @@ module Hibp
     #     raw data to the model specified by converter
     #
     class Json
-      # @param converter [Object] - (optional, default: nil)
-      #   Converter that used to convert complex
-      #   raw response data to the particular model representation.
-      #
-      #   If converter not set than parser returns raw data
-      #   (useful in cases when response returns array of strings)
-      #
-      def initialize(converter = nil)
-        @converter = converter
-      end
+      include Helpers::JsonConversion
 
       # Parse API response
       #
-      # @param response []
+      # @param response [Faraday::Response] -
+      #   Response that contains raw data for conversion
+      #
+      # @yield [attributes] - (optional, default: nil)
+      #   Converter that used to convert complex
+      #   raw response data to the particular model representation.
+      #
+      # @note If block with conversion not set than parser returns raw data
+      #   (useful in cases when response returns array of strings)
       #
       # @raise [Hibp::ServiceError]
       #
-      def parse_response(response)
+      def parse_response(response, &block)
         return nil if empty_response?(response)
 
         begin
           _, body = prepare_response(response)
 
-          @converter ? @converter.convert(body) : body
+          block_given? ? convert(body, &block) : body
         rescue Oj::ParseError
           raise_error(response.body)
         end
