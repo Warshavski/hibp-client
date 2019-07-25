@@ -11,11 +11,10 @@ require 'hibp/models/breach'
 require 'hibp/models/paste'
 require 'hibp/models/password'
 
-require 'hibp/converters/breach'
-require 'hibp/converters/paste'
-
-require 'hibp/parsers/password'
 require 'hibp/parsers/json'
+require 'hibp/parsers/breach'
+require 'hibp/parsers/password'
+require 'hibp/parsers/paste'
 
 require 'hibp/client'
 require 'hibp/request'

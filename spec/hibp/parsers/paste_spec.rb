@@ -2,9 +2,11 @@
 
 require 'spec_helper'
 
-RSpec.describe Hibp::Converters::Paste do
+RSpec.describe Hibp::Parsers::Paste do
   describe '#convert' do
-    subject { described_class.new.convert(data) }
+    subject { described_class.new.parse_response(response) }
+
+    let!(:response) { double('response', body: data, headers: {}) }
 
     let!(:data) do
       [{
@@ -13,7 +15,7 @@ RSpec.describe Hibp::Converters::Paste do
         'Id' => '8Q0BvKD8',
         'Date' => '2014-03-04T19:14:54Z',
         'EmailCount' => '139'
-      }]
+      }].to_json
     end
 
     it { is_expected.to be_an(Array) }

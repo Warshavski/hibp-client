@@ -7,11 +7,12 @@ RSpec.describe Hibp::ServiceError do
     context 'empty params' do
       subject { described_class.new }
 
-      it { expect(subject.message).to eq(' @data=nil, @raw_body=nil, @status_code=nil') }
+      it { expect(subject.message).to eq(' @body=nil, @raw_body=nil, @status_code=nil') }
 
-      it { expect(subject.data).to be_nil }
+      it { expect(subject.body).to be_nil }
 
       it { expect(subject.raw_body).to be_nil }
+
 
       it { expect(subject.status_code).to be_nil }
     end
@@ -19,9 +20,9 @@ RSpec.describe Hibp::ServiceError do
     context 'only message' do
       subject { described_class.new('test message') }
 
-      it { expect(subject.message).to eq('test message @data=nil, @raw_body=nil, @status_code=nil') }
+      it { expect(subject.message).to eq('test message @body=nil, @raw_body=nil, @status_code=nil') }
 
-      it { expect(subject.data).to be_nil }
+      it { expect(subject.body).to be_nil }
 
       it { expect(subject.raw_body).to be_nil }
 
@@ -33,15 +34,19 @@ RSpec.describe Hibp::ServiceError do
 
       let(:params) do
         {
-          data: 'data',
+          body: 'body',
           raw_body: 'raw_body',
           status_code: 'status_code'
         }
       end
 
-      it { expect(subject.message).to eq('test message @data="data", @raw_body="raw_body", @status_code="status_code"') }
+      it 'composes message from all params' do
+        exp_message = 'test message @body="body", @raw_body="raw_body", @status_code="status_code"'
 
-      it { expect(subject.data).to eq('data') }
+        expect(subject.message).to eq(exp_message)
+      end
+
+      it { expect(subject.body).to eq('body') }
 
       it { expect(subject.raw_body).to eq('raw_body') }
 
@@ -56,12 +61,12 @@ RSpec.describe Hibp::ServiceError do
 
     let(:params) do
       {
-        data: 'data',
+        body: 'body',
         raw_body: 'raw_body',
         status_code: 'status_code'
       }
     end
 
-    it { expect(subject).to eq('test message @data="data", @raw_body="raw_body", @status_code="status_code"') }
+    it { expect(subject).to eq('test message @body="body", @raw_body="raw_body", @status_code="status_code"') }
   end
 end

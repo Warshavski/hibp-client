@@ -2,10 +2,8 @@
 
 RSpec.describe Hibp::Parsers::Json do
   describe '#parse_response' do
-    subject { described_class.new(converter).parse_response(response) }
-
-    context 'when converter not set' do
-      let!(:converter) { nil }
+    context 'when block not set' do
+      subject { described_class.new.parse_response(response) }
 
       context 'when response body is empty' do
         let(:response) { double('response', body: nil, headers: nil) }
@@ -28,20 +26,15 @@ RSpec.describe Hibp::Parsers::Json do
       end
     end
 
-    context 'when converter is set' do
-      let!(:converter) { double('converter') }
+    context 'when block is set' do
+      subject { described_class.new.parse_response(response) { |attrs| attrs } }
 
-      let(:raw_data)    { '["wat", "so", "hey"]' }
-      let(:parsed_data) { %w[wat so hey] }
-
-      before do
-        allow(converter).to receive(:convert).with(parsed_data).and_return('parsed!')
-      end
+      let(:raw_data) { '{ "CamelCase":"attribute" }' }
 
       context 'when response body contains array of strings' do
         let(:response) { double('response', body: raw_data, headers: nil) }
 
-        it { is_expected.to eq('parsed!') }
+        it { is_expected.to eq(camel_case: 'attribute') }
       end
     end
   end

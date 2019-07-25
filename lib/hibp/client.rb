@@ -151,9 +151,9 @@ module Hibp
 
       case service
       when ->(n) { breach_services.include?(n) }
-        Parsers::Json.new(Converters::Breach.new)
+        Parsers::Breach.new
       when :pastes
-        Parsers::Json.new(Converters::Paste)
+        Parsers::Paste.new
       when :data_classes
         Parsers::Json.new
       end

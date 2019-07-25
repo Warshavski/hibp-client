@@ -6,13 +6,19 @@ module Hibp
   #   Used to represent an error that may occur when performing a request to the API
   #
   class ServiceError < StandardError
-    attr_reader :data, :raw_body, :status_code
+    attr_reader :body, :raw_body, :status_code
 
     # @param message [String] - (optional, '') Message to describe an error
     # @param params [Hash] - (optional, {}) Additional error information
     #
-    # @option params [String] :data -
+    # @option params [String] :body -
     #   A JSON formatted error object that provides more details about the specifics of the error
+    #
+    # @option params [String] :title -
+    #   Error summary
+    #
+    # @option params [String] :detail -
+    #   Error detailed description
     #
     # @option params [String] :raw_body -
     #   Raw body from response
@@ -21,9 +27,9 @@ module Hibp
     #   Http status code
     #
     def initialize(message = '', params = {})
-      @data           = params[:data]
-      @raw_body       = params[:raw_body]
-      @status_code    = params[:status_code]
+      @body         = params[:body]
+      @raw_body     = params[:raw_body]
+      @status_code  = params[:status_code]
 
       super(message)
     end
@@ -35,7 +41,7 @@ module Hibp
     private
 
     def instance_variables_to_s
-      attr_values = %i[data raw_body status_code].map do |attr|
+      attr_values = %i[body raw_body status_code].map do |attr|
         attr_value = send(attr)
 
         "@#{attr}=#{attr_value.inspect}"
