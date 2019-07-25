@@ -76,7 +76,7 @@ client = Hibp::Client.new
 #
 # => Hibp::Breach
 # 
-client.breach('000webhost') 
+client.breach('000webhost').fetch
 ```
 
 #### Getting all data classes in the system
