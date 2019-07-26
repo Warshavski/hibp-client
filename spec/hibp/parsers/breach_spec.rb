@@ -2,9 +2,11 @@
 
 require 'spec_helper'
 
-RSpec.describe Hibp::Breaches::Converter do
-  describe '#convert' do
-    subject { described_class.new.convert(data) }
+RSpec.describe Hibp::Parsers::Breach do
+  describe '#parse_response' do
+    subject { described_class.new.parse_response(response) }
+
+    let(:response) { double('response', body: data, headers: {}) }
 
     context 'when data is a single object' do
       let!(:data) do
@@ -12,17 +14,17 @@ RSpec.describe Hibp::Breaches::Converter do
           'Name' => 'name',
           'Title' => 'title',
           'Domain' => 'domain',
-          'BreachDate' => '2019-07-22',
-          'AddedDate' => '2019-07-22',
-          'ModifiedDate' => '2019-07-22',
+          'BreachDate' => '2013-10-04',
+          'AddedDate' => '2013-12-04T00:00:00Z',
+          'ModifiedDate' => '2013-12-04T00:00:00Z',
           'PwnCount' => 1,
           'Description' => 'description',
           'DataClasses' => %w[wat so],
           'LogoPath' => 'logo'
-        }
+        }.to_json
       end
 
-      it { is_expected.to be_an(Hibp::Breach) }
+      it { is_expected.to be_an(Hibp::Models::Breach) }
 
       it { expect(subject.name).to eq('name') }
 
@@ -30,11 +32,11 @@ RSpec.describe Hibp::Breaches::Converter do
 
       it { expect(subject.title).to eq('title') }
 
-      it { expect(subject.breach_date).to eq('2019-07-22') }
+      it { expect(subject.breach_date).to eq(Date.parse('2013-10-04')) }
 
-      it { expect(subject.added_date).to eq('2019-07-22') }
+      it { expect(subject.added_date).to eq(Time.parse('2013-12-04T00:00:00Z')) }
 
-      it { expect(subject.modified_date).to eq('2019-07-22') }
+      it { expect(subject.modified_date).to eq(Time.parse('2013-12-04T00:00:00Z')) }
 
       it { expect(subject.pwn_count).to eq(1) }
 
@@ -58,14 +60,14 @@ RSpec.describe Hibp::Breaches::Converter do
             'Title' => 'title#2',
             'Domain' => 'domain#2'
           }
-        ]
+        ].to_json
       end
 
       it { is_expected.to be_an(Array) }
 
       it { expect(subject.size).to be(2) }
 
-      it { expect(subject.all? { |e| e.is_a?(Hibp::Breach) }).to be(true) }
+      it { expect(subject.all? { |e| e.is_a?(Hibp::Models::Breach) }).to be(true) }
     end
   end
 end

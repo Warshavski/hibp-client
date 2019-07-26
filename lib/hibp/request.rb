@@ -8,33 +8,31 @@ module Hibp
   #   @see https://haveibeenpwned.com/API/v3
   #
   class Request
-    API_HOST = 'https://haveibeenpwned.com/api/v3'
-
     attr_reader :headers
 
-    # @param api_key [String] -
-    #   An HIBP subscription key is required to make an authorised call
-    #
-    # @param parser [Hibp::Parser]
+    # @param parser [Hibp::Parser] -
+    #   A tool to parse and convert data into appropriate models
     #
     # @param endpoint [String] -
     #   A specific API endpoint to call appropriate method
     #
-    def initialize(api_key: nil, parser: Parser.new, endpoint:)
+    def initialize(endpoint:, parser: Parsers::Json.new)
       @endpoint = endpoint
       @parser = parser
 
       @headers = {
         'Content-Type' => 'application/json',
-        'User-Agent' => "Breach-Monitor-Client #{Hibp::VERSION}",
-        'hibp-api-key' => api_key
+        'User-Agent' => "Ruby HIBP-Client #{Hibp::VERSION}"
       }
     end
 
     # Perform a GET request
     #
-    # @param params [Hash]
-    # @param headers [Hash]
+    # @param params [Hash] -
+    #   Additional query params
+    #
+    # @param headers [Hash] -
+    #   Additional HTTP headers
     #
     # @raise [Hibp::ServiceError]
     #
@@ -43,7 +41,9 @@ module Hibp
         configure_request(request: request, params: params, headers: headers)
       end
 
-      @parser.parse_response(response)
+      @parser ? @parser.parse_response(response) : response.body
+    rescue Faraday::ClientError::ResourceNotFound
+      nil
     rescue StandardError => e
       handle_error(e)
     end
@@ -51,7 +51,7 @@ module Hibp
     private
 
     def rest_client
-      Faraday.new(API_HOST) do |faraday|
+      Faraday.new do |faraday|
         faraday.headers = @headers
 
         faraday.response(:raise_error)

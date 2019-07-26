@@ -3,20 +3,25 @@
 require 'spec_helper'
 
 RSpec.describe Hibp::Request do
-  let(:endpoint) { 'test' }
-
-  let(:api_key)   { 'wat-key' }
-  let(:api_host)  { 'https://haveibeenpwned.com/api/v3' }
+  let!(:endpoint) { 'https://haveibeenpwned.com/api/v3/test' }
 
   describe '#get' do
-    subject { described_class.new(api_key: api_host, endpoint: endpoint).get }
+    subject { described_class.new(endpoint: endpoint).get }
 
     it 'surfaces client request exceptions as a Hibp::ServiceError' do
-      exception = Faraday::Error::ClientError.new('the server responded with status 500')
+      exception = Faraday::Error::ClientError.new('the server responded with status 400')
 
-      stub_request(:get, "#{api_host}/#{endpoint}").to_raise(exception)
+      stub_request(:get, endpoint).to_raise(exception)
 
       expect { subject }.to raise_error(Hibp::ServiceError)
+    end
+
+    it 'surfaces client resource not request exceptions as nil' do
+      exception = Faraday::ClientError::ResourceNotFound.new('resource not found')
+
+      stub_request(:get, endpoint).to_raise(exception)
+
+      is_expected.to be(nil)
     end
 
     it 'surfaces an unparseable response body as a Hibp::ServiceError' do
@@ -24,7 +29,7 @@ RSpec.describe Hibp::Request do
 
       exception = Faraday::Error::ClientError.new('the server responded with status 503', response_values)
 
-      stub_request(:get, "#{api_host}/#{endpoint}").to_raise(exception)
+      stub_request(:get, endpoint).to_raise(exception)
 
       expect { subject }.to raise_error(Hibp::ServiceError)
     end
@@ -37,7 +42,7 @@ RSpec.describe Hibp::Request do
       exception = Faraday::Error::ClientError.new('the server responded with status 503', response_values)
 
       begin
-        described_class.new(api_key: api_key, endpoint: endpoint).send(:handle_error, exception)
+        described_class.new(endpoint: endpoint).send(:handle_error, exception)
       rescue StandardError => boom
         expect(boom.status_code).to eq 503
         expect(boom.raw_body).to eq 'A non JSON response'
