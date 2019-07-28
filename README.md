@@ -1,4 +1,4 @@
-# Hibp
+# Hibp-client
 
 [![Build Status](https://travis-ci.com/Warshavski/hibp.svg?branch=master)](https://travis-ci.com/Warshavski/hibp)
 
@@ -11,7 +11,7 @@ This gem based on [API v3](https://haveibeenpwned.com/API/v3)
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'hibp'
+gem 'hibp-client'
 ```
 
 And then execute:
@@ -20,7 +20,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install hibp
+    $ gem install hibp-client
 
 ## Usage
 
@@ -64,6 +64,7 @@ client.breaches.fetch
 # Return the details of each breach associated with a specific domain.
 # 
 # => Array<Hibp::Breach> 
+#
 client.breaches.where(domain: 'adobe.com').fetch
 ```
 
