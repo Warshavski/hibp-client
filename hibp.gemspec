@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'hibp/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'hibp'
+  spec.name          = 'hibp-client'
   spec.version       = Hibp::VERSION
   spec.authors       = ['Warshavski']
   spec.email         = ['p.warshavski@gmail.com']
@@ -14,8 +14,6 @@ Gem::Specification.new do |spec|
   spec.description   = 'A simple tool to check if an account(email address and username) has been compromised in a data breach'
   spec.homepage      = 'https://github.com/Warshavski/hibp'
   spec.license       = 'MIT'
-
-  spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/Warshavski/hibp'
