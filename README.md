@@ -1,6 +1,6 @@
 # Hibp-client
 
-[![Build Status](https://travis-ci.com/Warshavski/hibp.svg?branch=master)](https://travis-ci.com/Warshavski/hibp)
+[![Build Status](https://travis-ci.com/Warshavski/hibp-client.svg?branch=master)](https://travis-ci.com/Warshavski/hibp-client)
 
 A simple Ruby client for interacting with [Have I Been Pwned](https://haveibeenpwned.com/) REST API.
 
