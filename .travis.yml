@@ -1,13 +1,17 @@
----
 sudo: false
 language: ruby
-
 cache: bundler
-
 before_install: gem install bundler
-
 rvm:
-  - 2.6
-  - 2.5
-  - 2.4
-  - 2.3
+- 2.6
+- 2.5
+- 2.4
+- 2.3
+deploy:
+  provider: rubygems
+  api_key:
+    secure: YXtt8Rv0+4c78eoIE7na1jsavtk4ELbcdGvvwFKlqaVlFufnDobt917r17Fikn+/8mSz3nYHQ4psAXAUgU9RBjlphsh2Lks/jJq87DoG8BoaCi+vatIgd3dyQLh+PYWLlYQBT0f8R3TCbDw3AZL0hBfOd09ltS6wKn4aWFMor3Yhb8+1qxUTze3p2OntlRAaUD32tx8uTSYDxZc0oewQlIBxRTkxO9obHozqBLo7EZMJFUYle1GdTnuFvYFAkrN/tD6jsz++qd2Qf56jFkSqmDIcUkDZeSIZmdCDMysh4p5ZHKyhmaETgcD2r2r2W9cA7RfFaMYzUaekGpr9IBbalAH/26lifigLKf9JdsiLel8aV4y1+UIkrcMEWf7PcYCMI6hs6pu45DjgTyyUqqse8cwyQ3XjoYH4SX3a5mSQ4xfzTnMRkZ61e/vVATgkSgT0EGlXXLjf+YHRgZoYwV8j2xECJt2Wnu6v0bEOSbGBWhrmMyS8vWShamOx1hzbGSv8y8kYWLPDPf0t4gBZLWNW1960Ct6p2xGQoPsQ/F9sVuR25y/cTuHVFVziwW3cfdhQxgKnefCSHbVVCY8RXKx2xuW3LAF3vfpQrNr3SbufUhD/yO5x5TjpCko97SY9TogrA5U8C4kD4C67q1p+2fUsFeNykm6RB+SMz1OZK5irEs4=
+  gem: hibp-client
+  on:
+    tags: true
+    repo: Warshavski/hibp-client
