@@ -42,7 +42,7 @@ module Hibp
       end
 
       @parser ? @parser.parse_response(response) : response.body
-    rescue Faraday::ClientError::ResourceNotFound
+    rescue Faraday::ResourceNotFound
       nil
     rescue StandardError => e
       handle_error(e)
@@ -76,7 +76,7 @@ module Hibp
     end
 
     def parsable_error?(error)
-      error.is_a?(Faraday::Error::ClientError) && error.response
+      error.is_a?(Faraday::ClientError) && error.response
     end
 
     def parse_error(error)
