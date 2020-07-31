@@ -33,10 +33,10 @@ RSpec.describe Hibp::Parsers::Password do
         it 'does not convert them into password models' do
           actual_passwords = subject
 
-          occurrences = actual_passwords.map(&:occurrences)
+          suffixes = actual_passwords.map(&:suffix)
 
           expect(actual_passwords.count).to eq(2)
-          expect(occurrences).not_to include('003D68EB55068C33ACE09247EE4C639306B')
+          expect(suffixes).not_to include('003D68EB55068C33ACE09247EE4C639306B')
         end
       end
     end
