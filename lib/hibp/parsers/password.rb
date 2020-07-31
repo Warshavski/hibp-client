@@ -10,7 +10,8 @@ module Hibp
       ROWS_SPLITTER = "\r\n"
       ATTRIBUTES_SPLITTER = ':'
 
-      # Convert API response raw data to the passwords models.
+      # Convert API response raw data to the passwords models. If occurrences of
+      # a hash suffix are 0 then it's fake data added by the add_padding option
       #
       # @param response [] -
       #   Contains the suffix of every hash beginning with the specified prefix,
@@ -21,15 +22,15 @@ module Hibp
       def parse_response(response)
         data = response.body
 
-        data.split(ROWS_SPLITTER).map(&method(:convert_to_password))
-      end
+        data.split(ROWS_SPLITTER).inject([]) do |array, row|
+          suffix, occurrences = row.split(ATTRIBUTES_SPLITTER)
 
-      private
+          if occurrences.to_i > 0
+            array <<  Models::Password.new(suffix: suffix, occurrences: occurrences.to_i)
+          end
 
-      def convert_to_password(row)
-        suffix, occurrences = row.split(ATTRIBUTES_SPLITTER)
-
-        Models::Password.new(suffix: suffix, occurrences: occurrences.to_i)
+          array
+        end
       end
     end
   end
