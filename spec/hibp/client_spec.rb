@@ -58,12 +58,21 @@ RSpec.describe Hibp::Client do
   end
 
   describe '#passwords' do
-    subject { described_class.new.passwords('test') }
+    let(:add_padding) { false }
+    subject { described_class.new.passwords('test', add_padding: add_padding) }
 
     it { is_expected.to be_an(Hibp::Query) }
 
     it { expect(subject.endpoint).to eq('https://api.pwnedpasswords.com/range/A94A8') }
 
-    it { expect(subject.headers).to eq({}) }
+    context 'when add_padding is true' do
+      let(:add_padding) { true }
+
+      it { expect(subject.headers).to eq({'Add-Padding' => 'true'}) }
+    end
+
+    context 'when add_padding is false' do
+      it { expect(subject.headers).to eq({}) }
+    end
   end
 end

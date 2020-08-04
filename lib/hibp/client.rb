@@ -114,23 +114,29 @@ module Hibp
     # @param password [String] -
     #   The value of the source password being searched for
     #
+    # @param add_padding [Boolean] -
+    #   Pads out the response with a random number of fake requests, to prevent
+    #   anyone looking at the responses from guessing what the hash prefix was.
+    #   
+    #
     # @note The API will respond with include the suffix of every hash beginning
     #       with the specified password prefix(five first chars of the password hash),
     #       and with a count of how many times it appears in the data set.
     #
     # @return [Hibp::Query]
     #
-    def passwords(password)
-      configure_password_query(password)
+    def passwords(password, add_padding: false)
+      configure_password_query(password, add_padding)
     end
 
     private
 
-    def configure_password_query(password)
+    def configure_password_query(password, add_padding)
       pwd_hash = ::Digest::SHA1.hexdigest(password).upcase
       endpoint = "#{PASSWORD_API_HOST}/#{pwd_hash[0..4]}"
+      headers = add_padding ? {'Add-Padding' => 'true'} : {}
 
-      Query.new(endpoint: endpoint, parser: Parsers::Password.new)
+      Query.new(endpoint: endpoint, headers: headers, parser: Parsers::Password.new)
     end
 
     def configure_core_query(service, parameter = nil)
