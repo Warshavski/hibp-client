@@ -59,7 +59,7 @@ RSpec.describe Hibp::Client do
 
   describe '#passwords' do
     let(:add_padding) { false }
-    subject { described_class.new.passwords('test', add_padding) }
+    subject { described_class.new.passwords('test', add_padding: add_padding) }
 
     it { is_expected.to be_an(Hibp::Query) }
 

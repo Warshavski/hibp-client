@@ -125,7 +125,7 @@ module Hibp
     #
     # @return [Hibp::Query]
     #
-    def passwords(password, add_padding=false)
+    def passwords(password, add_padding: false)
       configure_password_query(password, add_padding)
     end
 
