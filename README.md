@@ -285,7 +285,7 @@ client.passwords('password').fetch
 You can optionally pass in a second boolean parameter to the `passwords` command, to enable response padding. This will add a random number of fake password hashes to the response, preventing anyone analysing the encrypted response from guessing the password. The fake data is removed prior to returning the array of password models so there is no additional filtering you need to do.
 ```ruby
 client = Hibp::Client.new
-client.passwords('password', true).fetch
+client.passwords('password', add_padding: true).fetch
 ```
 
 ### Errors
