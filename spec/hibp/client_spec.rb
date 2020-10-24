@@ -25,6 +25,8 @@ RSpec.describe Hibp::Client do
     it { expect(subject.endpoint).to eq('https://haveibeenpwned.com/api/v3/breach/test') }
 
     it { expect(subject.headers).to eq('hibp-api-key' => '') }
+
+    it { expect(subject.instance_variable_get('@parser')).to be_a(Hibp::Parsers::Breach) }
   end
 
   describe '#account_breaches' do
@@ -35,6 +37,8 @@ RSpec.describe Hibp::Client do
     it { expect(subject.endpoint).to eq('https://haveibeenpwned.com/api/v3/breachedaccount/test%40example.com') }
 
     it { expect(subject.headers).to eq('hibp-api-key' => '') }
+
+    it { expect(subject.instance_variable_get('@parser')).to be_a(Hibp::Parsers::Breach) }
   end
 
   describe '#data_classes' do

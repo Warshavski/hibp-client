@@ -117,7 +117,7 @@ module Hibp
     # @param add_padding [Boolean] -
     #   Pads out the response with a random number of fake requests, to prevent
     #   anyone looking at the responses from guessing what the hash prefix was.
-    #   
+    #
     #
     # @note The API will respond with include the suffix of every hash beginning
     #       with the specified password prefix(five first chars of the password hash),
@@ -153,7 +153,7 @@ module Hibp
     end
 
     def resolve_parser(service)
-      breach_services = %i[breach breaches account_bereaches]
+      breach_services = %i[breach breaches account_breaches]
 
       case service
       when ->(n) { breach_services.include?(n) }
