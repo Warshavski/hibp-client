@@ -72,7 +72,7 @@ A "breach" is an incident where data is inadvertently exposed in a vulnerable sy
 - `domain [String]` - The domain of the primary website the breach occurred on.
                       This may be used for identifying other assets external systems may have for the site. 
 
-- `breach_data [Date]` - The date (with no time) the breach originally occurred on in ISO 8601 format.
+- `breach_date [Date]` - The date (with no time) the breach originally occurred on in ISO 8601 format.
                          This is not always accurate — frequently breaches are discovered and reported long after the original incident.
                          Use this attribute as a guide only. 
 
